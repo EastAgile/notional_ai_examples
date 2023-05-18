@@ -33,12 +33,13 @@ class FeatureSelector():
 
     def __finetune_xgb(self):
         # Fine-tune xgb
+        print('Fine tuning Xgboost model')
         study_xgb = optuna.create_study(direction="minimize")
         study_xgb.optimize(
             OptunaObjective('xgboost', self.train_data, self.target_col,
                             self.cvs, self.scoring, self.timestamp_col),
             n_trials=self.optuna_n_trials,
-            show_progress_bar=False
+            show_progress_bar=True
         )
 
         xgb_params = study_xgb.best_params
@@ -53,12 +54,12 @@ class FeatureSelector():
         self.baseline_loss = run_cv(self.xgb_model, self.train_data,
                                     self.target_col, self.cvs, self.scoring, self.timestamp_col)
         feature_splits = np.array_split(
-            feature_codes, len(feature_codes)//5000)
+            feature_codes, len(feature_codes)//500)
 
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
-        for idx, feature_codes_subset in enumerate(tqdm(feature_splits)):
+        for idx, feature_codes_subset in enumerate(tqdm(feature_splits[:10])):
             train_data_exo = add_exo_features(
                 self.train_data,
                 self.timestamp_col,

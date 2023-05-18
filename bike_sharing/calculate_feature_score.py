@@ -23,19 +23,14 @@ def calculate_feature_score(
                         cvs, scoring, timestamp_col, baseline_loss)
         losses_df[','.join(feature_code) if len(
             feature_code) > 0 else 'nothing'] = losses
-        if i == len(exo_columns) - 1:
-            results_df = pd.DataFrame(losses_df).T
-            cv_cols = [f'cv{x}' for x in range(1, results_df.shape[1] + 1)]
-            results_df.columns = cv_cols
-            results_df['mean'] = results_df[cv_cols].mean(axis=1)
-            results_df.to_csv(f'{output_dir}/{file_name}.csv')
 
-            elapsed_time = time.time() - start_time
-            msg = f'{i+1}/{len(exo_columns)} features completed in {elapsed_time:.2f} seconds'
-            print(msg)
-
+    results_df = pd.DataFrame(losses_df).T
+    cv_cols = [f'cv{x}' for x in range(1, results_df.shape[1] + 1)]
+    results_df.columns = cv_cols
+    results_df['mean'] = results_df[cv_cols].mean(axis=1)
+    results_df.to_csv(f'{output_dir}/{file_name}.csv')
     elapsed_time = time.time() - start_time
-    msg = f'Finished {len(exo_columns)} features in {elapsed_time:.2f} seconds'
+    msg = f'{len(exo_columns)} features finished in {elapsed_time:.2f} seconds'
     return msg
 
 
