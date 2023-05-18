@@ -22,13 +22,14 @@ class FeatureSelector():
         self.timestamp_col = None
         self.target_col = None
         self.prediction_length = None
-        self.parquet_file_path = None
+        self.features_parquet_path = None
         self.output_dir = None
         self.scoring = None
         self.optuna_n_trials = None
         self.xgb_model = None
         self.baseline_loss = None
-        self.final_selected_features = None
+        self.selected_features = None
+        self.gpu_id = None
 
     def __finetune_xgb(self):
         # Fine-tune xgb
@@ -43,12 +44,12 @@ class FeatureSelector():
         xgb_params = study_xgb.best_params
 
         xgb_model = xgb.XGBRegressor(
-            enable_categorical=True, tree_method="gpu_hist", gpu_id=0, **xgb_params, random_state=42,
+            enable_categorical=True, tree_method="gpu_hist", gpu_id=self.gpu_id, **xgb_params, random_state=42,
         )
         self.xgb_model = xgb_model
 
     def __run_feature_selection_loop(self):
-        feature_codes = get_feature_list(self.parquet_file_path)
+        feature_codes = get_feature_list(self.features_parquet_path)
         self.baseline_loss = run_cv(self.xgb_model, self.train_data,
                                     self.target_col, self.cvs, self.scoring, self.timestamp_col)
         feature_splits = np.array_split(
@@ -62,7 +63,7 @@ class FeatureSelector():
                 self.train_data,
                 self.timestamp_col,
                 feature_codes_subset,
-                self.parquet_file_path,
+                self.features_parquet_path,
                 self.prediction_length
             )
 
@@ -116,7 +117,7 @@ class FeatureSelector():
             self.train_data,
             self.timestamp_col,
             top_features,
-            self.parquet_file_path,
+            self.features_parquet_path,
             self.prediction_length
         )
 
@@ -154,12 +155,12 @@ class FeatureSelector():
         result_df['mean'] = result_df.mean(axis=1)
         result_df = result_df.sort_values('mean', ascending=False)
 
-        final_selected_features = result_df.index[0].split(',')
-        self.final_selected_features = final_selected_features
+        selected_features = result_df.index[0].split(',')
+        self.selected_features = selected_features
 
     def fit(
         self, train_data, cvs, timestamp_col, target_col,
-        prediction_length, parquet_file_path, output_dir, scoring, optuna_n_trials=200
+        prediction_length, features_parquet_path, output_dir, scoring, optuna_n_trials=200, gpu_id=0
     ):
         self.train_data = train_data
         self.org_columns = train_data.columns.tolist()
@@ -167,20 +168,21 @@ class FeatureSelector():
         self.timestamp_col = timestamp_col
         self.target_col = target_col
         self.prediction_length = prediction_length
-        self.parquet_file_path = parquet_file_path
+        self.features_parquet_path = features_parquet_path
         self.output_dir = output_dir
         self.scoring = scoring
         self.optuna_n_trials = optuna_n_trials
+        self.gpu_id = gpu_id
         
         self.__finetune_xgb()
         self.__run_feature_selection_loop()
         top_features = self.__get_top_10_features()
         if len(top_features) == 0:
             print('There is no feature that would boost the prediction on your data.')
-            self.final_selected_features = []
+            self.selected_features = []
         else:
             self.__get_best_feature_combination(top_features)
 
     def get_best_features(self):
-        return self.final_selected_features
+        return self.selected_features
 
