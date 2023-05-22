@@ -6,7 +6,7 @@ This repository contains the necessary files for the exogenous variables feature
 
 The following files are included in this repository:
 
-1. **utils.py**: This file contains utility functions that are used in other scripts for data preprocessing, feature engineering, and analysis.
+1. **utils.py**: This file contains utility functions that are used in other scripts for data preprocessing and feature engineering.
 
 2. **requirement.txt**: This file lists the dependencies required to run the project. Make sure to install these dependencies before executing the code.
 
