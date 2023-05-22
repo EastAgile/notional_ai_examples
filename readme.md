@@ -1,6 +1,6 @@
 # Exogenous Variables Feature Selection Project - README
 
-This repository contains the necessary files for the exogenous variables feature selection project on the bike dataset. The goal of this project is to identify the most relevant features from the exogenous variables in the dataset and evaluate the performance on various time series forecasting models.
+This repository contains the necessary files for the exogenous variables feature selection on various examples. The goal of this project is to identify the most relevant features from the exogenous variables in the dataset and evaluate the performance across various time series forecasting models.
 
 ## Files
 
@@ -10,7 +10,7 @@ The following files are included in this repository:
 
 2. **requirement.txt**: This file lists the dependencies required to run the project. Make sure to install these dependencies before executing the code.
 
-3. **demo_bike_dataset.ipynb**: This Jupyter Notebook provides a demonstration of the feature selection process on the bike dataset. It loads the processed data file (`bike_sharing_day.csv`), applies feature selection techniques, and evaluates the selected features. You will also learn how to use the bulk API from Notional API to get the exogenous features.
+3. **bike_sharing/demo_bike_dataset.ipynb**: This Jupyter Notebook provides a demonstration of the feature selection process on the bike dataset. It loads the processed data file (`bike_sharing/data/bike_sharing_day.csv`), applies feature selection techniques, and evaluates the selected features. You will also learn how to use the bulk API from Notional API to get the exogenous features.
 
 4. **calculate_feature_score.py**: This script is designed to calculate scores for a batch of features. It is placed in a separate file to support multiprocessing, allowing for efficient computation.
 
