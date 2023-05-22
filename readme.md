@@ -20,7 +20,7 @@ The following files are included in this repository:
 
 To use this project, follow these steps:
 
-1. install the dependencies listed in the `requirement.txt` file using different package managers, you can follow the instructions below:
+Install the dependencies listed in the `requirement.txt` file using different package managers, you can follow the instructions below:
 
 ### Installing with pip
 
@@ -34,17 +34,21 @@ pip install -r requirement.txt
 conda install --file requirement.txt
 ```
 
-2. Open the `demo_bike_dataset.ipynb` notebook in Jupyter Notebook.
+### Bike sharing dataset example
+You can checkout the example on the bike sharing dataset:
 
-3. Execute the cells in the notebook sequentially to see the step-by-step process of feature selection on the bike dataset.
+1. Open the `bike_sharing/demo_bike_dataset.ipynb` notebook in Jupyter Notebook.
+
+2. Execute the cells in the notebook sequentially to see the step-by-step process of feature selection on the bike dataset.
 
 ## Contributing
 
 Contributions to this project are welcome. If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
+
 ## License
 
-This project is licensed under the [<INSERT LICENSE HERE>](LICENSE). You are free to use, modify, and distribute the code in this repository for personal or commercial purposes.
+This project is licensed under the [LICENSE](LICENSE). You are free to use, modify, and distribute the code in this repository for personal or commercial purposes.
 
 ## Acknowledgments
 
