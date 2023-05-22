@@ -239,15 +239,21 @@ def fine_tune_model(model_name, train_data, target_col, cvs, scoring, timestamp_
     return model
 
 
-def evaluate_models(models, train_data, test_data, target_col, timestamp_col, scoring):
+def evaluate_models(models, train_data, test_data, target_col, timestamp_col, scoring, prediction_length):
     X_train, y_train = create_X_y(train_data, target_col, timestamp_col)
     X_test, y_test = create_X_y(test_data, target_col, timestamp_col)
     best_loss = float('inf')
     best_model = 'none'
     for model in models:
         name = type(model).__name__
-        model.fit(X_train, y_train)
-        preds = model.predict(X_test)
+        
+        if name == ARIMAModel:
+            model.fit(X_train.drop(f'{target_col}_lag_{prediction_length}', axis=1), y_train)
+            preds = model.predict(X_test.drop(f'{target_col}_lag_{prediction_length}', axis=1))
+        else:
+            model.fit(X_train, y_train)
+            preds = model.predict(X_test)
+            
         loss = scoring(preds, y_test)
         if loss < best_loss:
             best_loss = loss

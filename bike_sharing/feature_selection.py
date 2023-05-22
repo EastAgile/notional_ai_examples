@@ -51,15 +51,14 @@ class FeatureSelector():
 
     def __run_feature_selection_loop(self):
         feature_codes = get_feature_list(self.features_parquet_path)
-        self.baseline_loss = run_cv(self.xgb_model, self.train_data,
-                                    self.target_col, self.cvs, self.scoring, self.timestamp_col)
+        
         feature_splits = np.array_split(
-            feature_codes, len(feature_codes)//500)
+            feature_codes, len(feature_codes)//5000)
 
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
-        for idx, feature_codes_subset in enumerate(tqdm(feature_splits[:10])):
+        for idx, feature_codes_subset in enumerate(tqdm(feature_splits)):
             train_data_exo = add_exo_features(
                 self.train_data,
                 self.timestamp_col,
@@ -156,12 +155,12 @@ class FeatureSelector():
         result_df['mean'] = result_df.mean(axis=1)
         result_df = result_df.sort_values('mean', ascending=False)
 
-        selected_features = result_df.index[0].split(',')
+        selected_features = [features.split(',') for features in result_df.index]
         self.selected_features = selected_features
 
     def fit(
         self, train_data, cvs, timestamp_col, target_col,
-        prediction_length, features_parquet_path, output_dir, scoring, optuna_n_trials=200, gpu_id=0
+        prediction_length, features_parquet_path, output_dir, scoring, optuna_n_trials=200, gpu_id=0, fitted=False
     ):
         self.train_data = train_data
         self.org_columns = train_data.columns.tolist()
@@ -176,7 +175,12 @@ class FeatureSelector():
         self.gpu_id = gpu_id
         
         self.__finetune_xgb()
-        self.__run_feature_selection_loop()
+        
+        self.baseline_loss = run_cv(self.xgb_model, self.train_data,
+            self.target_col, self.cvs, self.scoring, self.timestamp_col)
+        if not fitted:
+            self.__run_feature_selection_loop()
+        
         top_features = self.__get_top_10_features()
         if len(top_features) == 0:
             print('There is no feature that would boost the prediction on your data.')
@@ -184,6 +188,6 @@ class FeatureSelector():
         else:
             self.__get_best_feature_combination(top_features)
 
-    def get_best_features(self):
-        return self.selected_features
+    def get_n_best_features(self, n=5):
+        return self.selected_features[:n]
 
