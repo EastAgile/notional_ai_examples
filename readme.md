@@ -1,6 +1,6 @@
-# Exogenous Variables Feature Selection Project - README
+# Notional AI - Exogenous Variables Feature Selection
 
-This repository contains the necessary files for the exogenous variables feature selection on various examples. The goal of this project is to identify the most relevant features from the exogenous variables in the dataset and evaluate the performance across various time series forecasting models.
+This repository contains the necessary files for the exogenous variables feature selection on various examples. The goal of this project is to identify the most relevant features from the exogenous variables in the dataset and evaluate the performance across various time series forecasting models, using data from [Notional API](https://notional.ai/).
 
 ## Files
 
@@ -46,12 +46,6 @@ You can checkout the example on the bike sharing dataset:
 Contributions to this project are welcome. If you find any issues or have suggestions for improvements, please open an issue or submit a pull request.
 
 
-## License
+<!-- ## License
 
-This project is licensed under the [LICENSE](LICENSE). You are free to use, modify, and distribute the code in this repository for personal or commercial purposes.
-
-## Acknowledgments
-
-We would like to thank the authors of the bike dataset for making it publicly available for research and analysis.
-
-If you have any questions or need further assistance, please feel free to contact us.
+This project is licensed under the [LICENSE](LICENSE). You are free to use, modify, and distribute the code in this repository for personal or commercial purposes. -->
