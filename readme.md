@@ -1,4 +1,4 @@
-# Notional AI - Exogenous Variables Feature Selection
+# Notional AI - Exogenous Features Selection
 
 This repository contains the necessary files for the exogenous variables feature selection on various examples. The goal of this project is to identify the most relevant features from the exogenous variables in the dataset and evaluate the performance across various time series forecasting models, using data from [Notional API](https://notional.ai/).
 
