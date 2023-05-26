@@ -33,7 +33,10 @@ def calculate_feature_score(
     msg = f'{len(exo_columns)} features finished in {elapsed_time:.2f} seconds'
     return msg
 
+def main():
+    input_dict = pickle.load(sys.stdin.buffer)
+    output = calculate_feature_score(**input_dict)
+    pickle.dump(output, sys.stdout.buffer)
 
-input_dict = pickle.load(sys.stdin.buffer)
-output = calculate_feature_score(**input_dict)
-pickle.dump(output, sys.stdout.buffer)
+if __name__ == "__main__":
+    main()
