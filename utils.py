@@ -139,28 +139,29 @@ class ARIMAModel:
 
 
 def prepare_train_val_test_data(data, target_col, timestamp_col, test_size, val_ratio, cv_fold, prediction_length, add_lag_col=False):
-        if add_lag_col:
-            data[f'{target_col}_lag_{prediction_length}'] = data[target_col].shift(prediction_length)
-            data = data[prediction_length:]
-        
-        if test_size is None:
-            test_size = prediction_length
-        if test_size < 0:
-            raise Exception()
-        if test_size < 1:
-            test_size = int(np.floor(len(data)*(test_size)))
+    data = data.copy()
+    if add_lag_col:
+        data[f'{target_col}_lag_{prediction_length}'] = data[target_col].shift(prediction_length)
+        data = data[prediction_length:]
 
-        test_data = data.tail(test_size)
-        train_data = data.iloc[:-test_size]
+    if test_size is None:
+        test_size = prediction_length
+    if test_size < 0:
+        raise Exception()
+    if test_size < 1:
+        test_size = int(np.ceil(len(data)*(test_size)))
 
-        val_size = int(np.floor(val_ratio * len(data))/cv_fold)
-        cvs = []
-        for i in reversed(range(1, cv_fold + 1)):
-            start = train_data[timestamp_col].iloc[-i*val_size]
-            end = train_data[timestamp_col].iloc[(-i+1)*val_size - 1]
-            cvs.append((start, end))
+    test_data = data.tail(test_size)
+    train_data = data.iloc[:-test_size]
 
-        return train_data, test_data, cvs
+    val_size = int(np.ceil(val_ratio * len(data))/cv_fold)
+    cvs = []
+    for i in reversed(range(1, cv_fold + 1)):
+        start = train_data[timestamp_col].iloc[-i*val_size-1]
+        end = train_data[timestamp_col].iloc[(-i+1)*val_size - 1]
+        cvs.append((start, end))
+
+    return train_data, test_data, cvs
         
         
 def get_feature_list(uri):
@@ -216,8 +217,6 @@ def add_exo_features(input_df, timestamp_col, feature_list, parquet_file_path, p
 
     feature_day = feature_day[(feature_day.index >= min_date) & (
         feature_day.index <= max_date)]
-    # missing_pct = feature_day.isna().mean()
-    # feature_day = feature_day.loc[:, missing_pct < 0.2]
     feature_day.dropna(axis=1, inplace=True)
 
     input_df = input_df.merge(
